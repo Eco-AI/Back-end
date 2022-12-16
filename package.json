@@ -1,0 +1,21 @@
+{
+  "name": "eco_ai",
+  "version": "1.0.0",
+  "description": "EcoAI Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "demo",
+    "project"
+  ],
+  "author": "T-48",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose-express-api": "^0.0.3"
+  }
+}
