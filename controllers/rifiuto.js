@@ -1,7 +1,9 @@
 const Rifiuto = require('../models/rifiuto');
 
-//GET elenco rifiuti
+//GET elenco rifiuti by zona
+// TODO: search in piani_pulizia for the zona_id
 const getElencoRifiuti = (req, res) => {
+    const zona = req.params.zona;
     Rifiuto.find({}, (err, data) => {
         if (err) {
             return res.json({ Error: err });

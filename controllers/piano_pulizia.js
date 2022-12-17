@@ -27,7 +27,6 @@ const getPiano_pulizia = (req, res) => {
     })
 };
 
-
 //GET piano_pulizia by id
 const getPiano_puliziaById = (req, res) => {
     const id = req.params.id;

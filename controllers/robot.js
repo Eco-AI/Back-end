@@ -2,6 +2,7 @@ const Robot = require('../models/robot');
 
 
 //GET all robots
+// TODO: return only robots' id
 const getAllrobots = (req, res) => {
     Robot.find({}, (err, data) => {
         if (err) {

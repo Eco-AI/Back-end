@@ -8,6 +8,7 @@ const rifiutoSchema = new mongoose.Schema({
         required: true
     },
     posizione: coordinata.schema,
+    zona_id: String,
 });
 
 const rifiuto = mongoose.model('rifiuto', rifiutoSchema); //convert to model named rifiuto
