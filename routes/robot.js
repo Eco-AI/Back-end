@@ -8,9 +8,9 @@ const robotController = require('../controllers/robot');
 
 router.get('/robot', robotController.getAllRobot);
 
-router.get('/robot/:name', robotController.getOneRobot);
+router.get('/robot/:id', robotController.getOneRobot);
 
-router.put('/robot/:name', robotController.updateRobot);
+router.put('/robot/:id', robotController.updateRobot);
 
 // 4.
 module.exports = router; // export to use in server.js

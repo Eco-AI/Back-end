@@ -16,16 +16,33 @@ const newPiano_pulizia = (req, res) => {
     })
 };
 
+// GET piano_pulizia from priority queue
+const getPiano_pulizia = (req, res) => {
+    // TODO: implement priority queue
+    Piano_pulizia.findOne({}, (err, data) => {
+        if (err || !data) {
+            return res.json({ Error: err });
+        }
+        return res.json(data);
+    })
+};
+
 
 //GET piano_pulizia by id
-const getPiano_pulizia = (req, res) => {
+const getPiano_puliziaById = (req, res) => {
     const id = req.params.id;
-    
+    Piano_pulizia.findOne({ _id: id}, (err, data) => {
+        if (err || !data) {
+            return res.json({ Error: err });
+        }
+        return res.json(data);
+    })
 };
 
 
 //export controller functions
 module.exports = {
-    getAllPiano_pulizias,
+    getPiano_puliziaById,
+    getPiano_pulizia,
     newPiano_pulizia,
 };

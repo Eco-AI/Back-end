@@ -7,7 +7,7 @@ const robotSchema = new mongoose.Schema({
     capienza_attuale: String,
     temperatura: Number,
     batteria: Number,
-    coordinata: coordinata.schema,
+    posizone: coordinata.schema,
     online: Boolean,
     id_piano_pulizia: String,
     nome_organizazione: String,
