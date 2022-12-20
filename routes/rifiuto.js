@@ -11,3 +11,6 @@ router.get('/rifiuto', rifiutoController.getElencoRifiuti);
 router.post('/rifiuto', rifiutoController.riconoscimentoRifiuto);
 
 router.get('/rifiuto/:id', rifiutoController.getDettagliRifiuto);
+
+
+module.exports = router;

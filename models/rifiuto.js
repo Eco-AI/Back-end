@@ -1,5 +1,4 @@
 const mongoose = require("mongoose"); //import mongoose
-const coordinata = require("./coordinata"); // import coordinata
 
 // rifiuto schema
 const rifiutoSchema = new mongoose.Schema({
@@ -7,7 +6,11 @@ const rifiutoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    posizione: coordinata.schema,
+    posizione: {
+        LAT: Number,
+        LON: Number,
+        ALT: Number,
+    },
     zona_id: String,
 });
 

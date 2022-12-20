@@ -2,12 +2,26 @@ const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
 
-const routes = require('./routes/organisation'); // import the routes
+//const utente_route = require('./routes/utente'); // import the routes
+const org_route = require('./routes/organisation'); // import the routes
+const piano_route = require('./routes/piano_pulizia'); // import the routes
+const rifiuto_route = require('./routes/rifiuto'); // import the routes
+const robot_route = require('./routes/robot'); // import the routes
 
 const mongoose = require('mongoose');
 app.use(express.json());
 
-app.use('/', routes); //to use the routes
+//app.use('/', utente_route); //to use the routes
+app.use('/', org_route); //to use the routes
+app.use('/', piano_route); //to use the routes
+app.use('/', rifiuto_route); //to use the routes
+app.use('/', robot_route); //to use the routes
+
+/* Default 404 handler */
+app.use((req, res) => {
+    res.status(404);
+    res.json({ error: 'Error 404: Not Found' });
+});
 
 
 mongoose.connect(

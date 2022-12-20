@@ -10,5 +10,7 @@ router.post('/organisation', organisationController.newOrganisation);
 
 router.get('/organisation', organisationController.getAllOrganisations);
 
+router.delete('/organisation/:name', organisationController.deleteOrganisation);
+
 
 module.exports = router; // export to use in server.js

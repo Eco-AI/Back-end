@@ -1,5 +1,4 @@
 const mongoose = require("mongoose"); //import mongoose
-const coordinata = require("./coordinata"); // import coordinata
 
 // robot schema
 const robotSchema = new mongoose.Schema({
@@ -7,10 +6,14 @@ const robotSchema = new mongoose.Schema({
     capienza_attuale: String,
     temperatura: Number,
     batteria: Number,
-    posizone: coordinata.schema,
+    posizione: {
+        LAT: Number,
+        LON: Number,
+        ALT: Number,
+    },
     online: Boolean,
     id_piano_pulizia: String,
-    nome_organizazione: String,
+    nome_organizzazione: String,
 });
 
 const robot = mongoose.model('robot', robotSchema); //convert to model named robot

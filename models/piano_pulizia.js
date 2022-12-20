@@ -1,11 +1,18 @@
 const mongoose = require("mongoose"); //import mongoose
-const coordinata = require("./coordinata"); // import coordinata
 
 // piano_pulizia schema
 const piano_puliziaSchema = new mongoose.Schema({
     zona: {
-        regione: [coordinata.schema],
-        contenitori_rifiuti: [coordinata.schema],
+        regione: [{
+            LAT: Number,
+            LON: Number,
+            ALT: Number,
+        }],
+        contenitori_rifiuti: [{
+            LAT: Number,
+            LON: Number,
+            ALT: Number,
+        }],
         rifiuti_da_smistare: [String],
         rifiuti_non_riconosciuti: [String],
     },

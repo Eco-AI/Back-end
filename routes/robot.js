@@ -6,9 +6,11 @@ const router = express.Router();
 const robotController = require('../controllers/robot');
 // 3.
 
-router.get('/robot', robotController.getAllRobot);
+router.get('/robot', robotController.getAllRobots);
 
-router.get('/robot/:id', robotController.getOneRobot);
+router.post('/robot', robotController.createRobot);
+
+router.get('/robot/:id', robotController.getRobotById);
 
 router.put('/robot/:id', robotController.updateRobot);
 
