@@ -4,15 +4,14 @@ const express = require('express'); //import express
 const router = express.Router();
 // 2.
 const robotController = require('../controllers/robot');
+const tokenChecker = require('../middleware/tokenChecker');
 // 3.
 
-router.get('/robot/list/:org_id', robotController.getAllRobots);
+router.post('/robot', tokenChecker, robotController.createRobot);
 
-router.post('/robot', robotController.createRobot);
+router.get('/robot/:id', tokenChecker, robotController.getRobotById);
 
-router.get('/robot/:id', robotController.getRobotById);
-
-router.put('/robot/:id', robotController.updateRobot);
+router.put('/robot/:id', tokenChecker, robotController.updateRobot);
 
 // 4.
 module.exports = router; // export to use in server.js

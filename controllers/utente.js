@@ -77,33 +77,62 @@ const signup = async (req, res) => {
 	});
 };
 
-const tokenChecker = function (req, res, next) {
-	// header or url parameters or post parameters
-	var token = req.body.token || req.query.token || req.headers['x-access-token'];
-	if (!token) res.status(401).json({ success: false, message: 'No token provided.' })
-	// decode token, verifies secret and checks expiration
-	jwt.verify(token, process.env.SUPER_SECRET, function (err, decoded) {
-		if (err) res.status(403).json({ success: false, message: 'Token not valid' })
-		else {
-			// if everything is good, save in req object for use in other routes
-			req.loggedUser = decoded;
-			next();
-		}
-	});
-};
-
 const logout = (req, res) => {
 	// TODO
 };
 
-const getUtenteById = (req, res) => {
-	// TODO
+const getProfile = async (req, res) => {
+	user = req.loggedUser;
+
+	if (!user) {
+		res.status(401).json({ success: false, message: 'Unauthorized.' });
+		return;
+	}
+
+	// Get the user profile using the username
+	let profile;
+	await Utente.findOne({ username: user.username }).exec().then((result) => {
+		profile = result;
+	}).catch((err) => {
+		res.status(500).json({ Error: "Internal server error: " + err });
+	});
+
+	if (!profile) {
+		res.status(404).json({ success: false, message: 'User not found.' });
+		return;
+	}
+
+	res.status(200).json({ success: true, profile: profile });
+};
+
+const getOrganisations = async (req, res) => {
+	user = req.loggedUser;
+
+	if (!user) {
+		res.status(401).json({ success: false, message: 'Unauthorized.' });
+		return;
+	}
+
+	// Get the user profile using the username
+	let profile;
+	await Utente.findOne({ username: user.username }).exec().then((result) => {
+		profile = result;
+	}).catch((err) => {
+		res.status(500).json({ Error: "Internal server error: " + err });
+	});
+
+	if (!profile) {
+		res.status(404).json({ success: false, message: 'User not found.' });
+		return;
+	}
+
+	res.status(200).json({ success: true, nomi_organizzazioni: profile.nomi_organizzazioni });
 };
 
 module.exports = {
 	login: login,
 	signup: signup, 
-	tokenChecker:tokenChecker,
 	logout: logout,
-	getUtenteById: getUtenteById
+	getProfile: getProfile,
+	getOrganisations: getOrganisations
 };

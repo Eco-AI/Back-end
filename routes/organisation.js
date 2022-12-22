@@ -4,13 +4,17 @@ const express = require('express'); //import express
 const router = express.Router();
 // 2.
 const organisationController = require('../controllers/organisation');
+const tokenChecker = require('../middleware/tokenChecker'); //import tokenChecker
 // 3.
 
-router.post('/organisation', organisationController.newOrganisation);
+router.post('/organisation', tokenChecker, organisationController.newOrganisation);
 
-router.get('/organisation', organisationController.getAllOrganisations);
+router.delete('/organisation/:name', tokenChecker, organisationController.deleteOrganisation);
 
-router.delete('/organisation/:name', organisationController.deleteOrganisation);
+router.get('/organisation/:name/info', tokenChecker, organisationController.getOrganisation);
 
+router.get('/organisation/:name/robots', tokenChecker,  organisationController.getAllRobots);
+
+router.patch('/organisation/:name/robots/:id_robot', tokenChecker, organisationController.addRobotToOrganisation);
 
 module.exports = router; // export to use in server.js

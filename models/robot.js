@@ -2,7 +2,6 @@ const mongoose = require("mongoose"); //import mongoose
 
 // robot schema
 const robotSchema = new mongoose.Schema({
-    token: { type: String, required: true },
     capienza_attuale: Number,
     temperatura: Number,
     batteria: Number,

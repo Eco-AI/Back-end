@@ -1,63 +1,58 @@
 const Robot = require('../models/robot');
+const User = require('../models/utente');
+const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const { ObjectId } = require('mongodb');
 
-//GET all robots
-// Body: nome_organizzazione, filtro
-// TODO: return only robots' id
-const getAllRobots = (req, res) => {
-    // check if parameters are missing, if so return bad request
-    const nome_organizzazione = req.params.org_id;
-    const filtro = req.body.filtro;
-    // filtro esempio -> { "capienza_attuale": { ">": 0 } }
-    //                   { "capienza_attuale": { ">": 0 }, "temperatura": { "<": 30 } }
-    //                   { "batteria": { ">": 50 }, "temperatura": { ">": 30 } }
-    //                   { "batteria": { ">": 50 }, "temperatura": { ">": 30 }, "capienza_attuale": { "=": 0 } }
-    //                   { "batteria": { ">": 50 }, "temperatura": { "=!": 30 }, "capienza_attuale": { "<": 20 } }
 
-    Robot.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
-        if (err) {
-            res.status(500).json({ message: "Internal server error: " + err });
-            return;
+
+// POST create new robot
+// Body: nome_organizzazione
+const createRobot = (req, res) => {
+    let user = req.loggedUser;
+
+    // check that the user has the role of "Admin"
+    User.findOne({username: user.username}).then((data) => {
+        if (data.ruolo != "admin") {
+            return res.status(403).json({ Error: "Forbidden" });
         }
-        if (data.length == 0) {
-            res.status(404).json({ message: "No robots found" });
-            return;
+    }).catch((err) => {
+        return res.status(500).json({ Error: "Internal server error: " + err });
+    });
+
+    const nome_organizzazione = req.body.nome_organizzazione;
+
+    if (!nome_organizzazione) {
+        res.status(400).json({ message: "Bad request, missing parameters" });
+        return;
+    }
+
+    console.log("Creating new robot for organization: " + nome_organizzazione);
+
+    const newRobot = new Robot({
+        nome_organizzazione: "",
+        capienza_attuale: 0,
+        temperatura: 0,
+        batteria: 100,
+        posizione: {
+            LAT: 0,
+            LON: 0,
+            ALT: 0
         }
-        // check if filter is empty
-        if (!filtro) {
-            // return only robots' id
-            data = data.map(robot => robot["_id"]);
-            res.status(200).json(data);
-            return;
-        }
-        // filter is not empty, filter robots
-        let filteredRobots = [];
-        data.forEach(robot => {
-            let toAdd = true;
-            Object.keys(filtro).forEach(key => {
-                if (toAdd) {
-                    if (filtro[key]["="] != undefined && (robot[key] != filtro[key]["="])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key]["!="] != undefined && (robot[key] == filtro[key]["!="])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key][">"] != undefined && (robot[key] <= filtro[key][">"])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key]["<"] != undefined && (robot[key] >= filtro[key]["<"])) {
-                        toAdd = false;
-                    }
-                }
-            });
-            if (toAdd) {
-                filteredRobots.push(robot["_id"]);
-            }
-        });
-        res.status(200).json(filteredRobots);
+    });
+
+    var payload = {
+        id: newRobot._id,
+        nome_organizzazione: newRobot.nome_organizzazione
+    };
+
+    var token = jwt.sign(payload, process.env.SUPER_SECRET);
+
+    newRobot.save().then((data) => {
+        return res.status(201).json({ id: data._id, token: token });
+    }).catch((err) => {
+        return res.status(500).json({ Error: "Internal server error: " + err });
     });
 };
-
 // GET robot by id
 const getRobotById = (req, res) => {
     const id = req.params.id;
@@ -77,40 +72,11 @@ const getRobotById = (req, res) => {
     });
 };
 
-// POST create new robot
-// Body: nome_organizzazione
-const createRobot = (req, res) => {
-    const nome_organizzazione = req.body.nome_organizzazione;
-    if (!nome_organizzazione) {
-        res.status(400).json({ message: "Bad request, missing parameters" });
-        return;
-    }
-
-    console.log("Creating new robot for organization: " + nome_organizzazione);
-
-    const newRobot = new Robot({
-        token: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-        nome_organizzazione: nome_organizzazione,
-        capienza_attuale: 0,
-        temperatura: 0,
-        batteria: 100,
-        posizione: {
-            latitudine: 0,
-            longitudine: 0,
-            altitudine: 0
-        }
-    });
-    newRobot.save().then((data) => {
-        return res.status(201).json(data);
-    }).catch((err) => {
-        return res.status(500).json({ Error: "Internal server error: " + err });
-    });
-};
-
-
 // PUT update robot parameters by id
 const updateRobot = (req, res) => {
-    const id = req.params.id;
+    let robot = req.loggedUser;
+
+    const id = robot.id;
 
     // Check if the format of the id is valid before querying the database
     if (!ObjectId.isValid(id)) {
@@ -142,7 +108,6 @@ const updateRobot = (req, res) => {
 
 //export controller functions
 module.exports = {
-    getAllRobots,
     getRobotById,
     updateRobot,
     createRobot
