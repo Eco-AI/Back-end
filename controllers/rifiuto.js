@@ -15,15 +15,15 @@ const getElencoRifiuti = (req, res) => {
 // GET rifiuto by id
 const getDettagliRifiuto = (req, res) => {
     const id = req.params.id;
-    Rifiuto.findOne
-        ({
-            _id: id
-        }, (err, data) => {
-            if (err || !data) {
-                return res.json({ Error: err });
-            }
-            return res.json(data);
-        })
+    Rifiuto.findById(id, (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        if (data.length == 0) {
+            return res.status(404).json({ message: "Rifiuto not found" });
+        }
+        return res.json(data);
+    })
 };
 
 // POST riconoscimento rifiuto

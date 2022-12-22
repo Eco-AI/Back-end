@@ -10,7 +10,7 @@ const newOrganisation = (req, res) => {
     //check if the organisation name already exists in db
     Organisation.findOne({ name: req.body.name }, (err, data) => {
         //if organisation not in db, add it
-        if (!data) {
+        if (data.length === 0) {
             //create a new organisation object using the Organisation model and req.body
             const newOrganisation = new Organisation({
                 name: req.body.name,

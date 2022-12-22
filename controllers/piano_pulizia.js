@@ -20,7 +20,7 @@ const newPiano_pulizia = (req, res) => {
 const getPiano_pulizia = (req, res) => {
     // TODO: implement priority queue
     Piano_pulizia.findOne({}, (err, data) => {
-        if (err || !data) {
+        if (err || data.length === 0) {
             return res.json({ Error: err });
         }
         return res.json(data);
@@ -30,8 +30,8 @@ const getPiano_pulizia = (req, res) => {
 //GET piano_pulizia by id
 const getPiano_puliziaById = (req, res) => {
     const id = req.params.id;
-    Piano_pulizia.findOne({ _id: id}, (err, data) => {
-        if (err || !data) {
+    Piano_pulizia.findById(id, (err, data) => {
+        if (err || data.length === 0) {
             return res.json({ Error: err });
         }
         return res.json(data);

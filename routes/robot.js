@@ -6,7 +6,7 @@ const router = express.Router();
 const robotController = require('../controllers/robot');
 // 3.
 
-router.get('/robot', robotController.getAllRobots);
+router.get('/robot/list/:org_id', robotController.getAllRobots);
 
 router.post('/robot', robotController.createRobot);
 
