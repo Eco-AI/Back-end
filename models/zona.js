@@ -13,5 +13,5 @@ const zonaSchema = new mongoose.Schema({
 });
 
 // zona model
-const zona = mongoose.model("zona", zonaSchema);
+const zona = mongoose.model("Zona", zonaSchema);
 module.exports = zona;
