@@ -89,64 +89,10 @@ const getZoneContainers = (req, res) => {
 
         // Get containers
         const containers = zone.contenitori_rifiuti;
-        res.status(200).json({success: true, message: 'Zone position retrieved successfully', contenitori_rifiuti: containers});
+        res.status(200).json({success: true, message: 'Zone containers retrieved successfully', contenitori_rifiuti: containers});
     });
 };
 
-
-const getTrashToCollect = (req, res) => {
-    const id = req.params.id;
-
-    // handle bad request
-    if (!id) {
-        res.status(400).json({success: false, message: 'Bad request'});
-        return;
-    }
-
-    console.log("Getting trash id...");
-
-    // Find zone
-    Zona.findById(id, (err, zone) => {
-        if (err) {
-            res.status(500).json({success: false, message: 'Internal server error: ' + err});
-            return;
-        } else if (!zone) {
-            res.status(404).json({success: false, message: 'Zone not found'});
-            return;
-        }
-
-        // Get zone region
-        const position = zone.rifiuti_da_smistare;
-        res.status(200).json({success: true, message: 'Zone collactable trash retrieved successfully', rifiuti_da_smistare: position});
-    });
-};
-
-const getTrashToClassify = (req, res) => {
-    const id = req.params.id;
-
-    // handle bad request
-    if (!id) {
-        res.status(400).json({success: false, message: 'Bad request'});
-        return;
-    }
-
-    console.log("Getting trash id...");
-
-    // Find zone
-    Zona.findById(id, (err, zone) => {
-        if (err) {
-            res.status(500).json({success: false, message: 'Internal server error: ' + err});
-            return;
-        } else if (!zone) {
-            res.status(404).json({success: false, message: 'Zone not found'});
-            return;
-        }
-
-        // Get zone region
-        const position = zone.rifiuti_non_riconosciuti;
-        res.status(200).json({success: true, message: 'Zone unidentified trash retrieved successfully', rifiuti_non_riconosciuti: position});
-    });
-};
 
 
 //export controller functions
@@ -154,6 +100,4 @@ module.exports = {
     createZone: createZone,
     getZonePosition: getZonePosition,
     getZoneContainers: getZoneContainers,
-    getTrashToCollect: getTrashToCollect,
-    getTrashToClassify: getTrashToClassify
 };

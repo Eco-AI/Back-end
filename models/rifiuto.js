@@ -11,7 +11,8 @@ const rifiutoSchema = new mongoose.Schema({
         LON: Number,
         ALT: Number,
     },
-    classificazione: String
+    classificazione: String,
+    id_zona: String,
 });
 
 const rifiuto = mongoose.model('rifiuto', rifiutoSchema); //convert to model named rifiuto

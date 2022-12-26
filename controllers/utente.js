@@ -14,14 +14,14 @@ const login = async (req, res) => {
 	// user not found
 	if (user.length == 0) {
 		console.log("User not found");
-		res.status(404).json({ success: false, message: 'Authentication failed. User not found.' });
+		return res.status(404).json({ success: false, message: 'Authentication failed. User not found.' });
 	}
 
 	// check if password hashes match
 	let hash = crypto.createHash('sha256').update(req.body.password).digest('hex');
 
 	if (user.hash_password != hash) {
-		res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
+		return res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
 	}
 
 	// if user is found and password is right create a token
@@ -54,7 +54,7 @@ const signup = async (req, res) => {
 	await Utente.findOne({ username: req.body.username }).exec().then((result) => {
 		user = result;
 	}).catch((err) => {
-		res.status(500).json({ Error: "Internal server error: " + err });
+		return res.status(500).json({ Error: "Internal server error: " + err });
 	});
 
 	if (user) {
@@ -75,9 +75,9 @@ const signup = async (req, res) => {
 	// save the user
 	newUser.save((err) => {
 		if (err) {
-			res.status(500).json({ Error: "Internal server error: " + err });
+			return res.status(500).json({ Error: "Internal server error: " + err });
 		}
-		res.status(201).json({ success: true, message: 'User created successfully.' });
+		return res.status(201).json({ success: true, message: 'User created successfully.' });
 	});
 };
 
@@ -98,7 +98,7 @@ const getProfile = async (req, res) => {
 	await Utente.findOne({ username: user.username }).exec().then((result) => {
 		profile = result;
 	}).catch((err) => {
-		res.status(500).json({ Error: "Internal server error: " + err });
+		return res.status(500).json({ Error: "Internal server error: " + err });
 	});
 
 	if (!profile) {
@@ -122,7 +122,7 @@ const getOrganisations = async (req, res) => {
 	await Utente.findOne({ username: user.username }).exec().then((result) => {
 		profile = result;
 	}).catch((err) => {
-		res.status(500).json({ Error: "Internal server error: " + err });
+		return res.status(500).json({ Error: "Internal server error: " + err });
 	});
 
 	if (!profile) {

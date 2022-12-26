@@ -1,9 +1,12 @@
 const Piano_pulizia = require('../models/piano_pulizia');
+const Robot = require('../models/robot');
 // newPiano_pulizia function for post Piano_pulizia route
 //POST Piano_pulizia
 const createPianoPulizia = (req, res) => {
-    const { zona, data_inizio, data_fine } = req.body;
-    if (!zona || !data_inizio || !data_fine) {
+    let user = req.loggedUser;
+
+    const { id_zona, data_inizio, data_fine, nome_organizzazione } = req.body;
+    if (!zona || !data_inizio || !data_fine || !nome_organizzazione) {
         return res.status(400).json({ Error: "Bad request: missing parameters" });
     }
 
@@ -17,15 +20,17 @@ const createPianoPulizia = (req, res) => {
     }
 
     // check if data_inizio is before data_fine
-    if (data_inizio_date.getTime() > data_fine_date.getTime()) {
-        return res.status(400).json({ Error: "Bad request: data_inizio is after data_fine" });
+    if (data_inizio_date.getTime() >= data_fine_date.getTime()) {
+        return res.status(400).json({ Error: "Bad request: start date must be before end date" });
     }
 
-    //create a new Piano_pulizia object using the Piano_pulizia model and req.body
+    // create a new Piano_pulizia object using the Piano_pulizia model and req.body
     const newPiano_pulizia = new Piano_pulizia({
-        zona,
-        data_inizio_date,
-        data_fine_date
+        ID_zona: id_zona,
+        data_inizio: data_inizio_date,
+        data_fine: data_fine_date,
+        nome_organizzazione: nome_organizzazione,
+        ID_robot: ""
     });
 
     // save this object to database
@@ -53,7 +58,12 @@ const getPianoPuliziaList = (req, res) => {
             return res.status(404).json({ Error: "Not found" });
         }
 
-        return res.status(200).json(data);
+        // return the list of ids of piano_pulizia
+        ids = data.map((piano_pulizia) => {
+            return piano_pulizia._id;
+        });
+
+        return res.status(200).json(ids);
     });
 };
 
@@ -101,36 +111,52 @@ const getPianoPuliziaInfoForRobot = (req, res) => {
     });
 };
 
-// PATCH piano_pulizia
-// Body: { id_robot, nome_organizzazione }
+// PATCH piano_pulizia (request from robot)
 const assegnaPianoPulizia = (req, res) => {
-    const { id_robot, nome_organizzazione } = req.body;
+    let robot = req.loggedUser;
 
-    if (!id_robot || !nome_organizzazione) {
-        return res.status(400).json({ Error: "Bad request: missing parameters" });
-    }
-
-    // find the piano_pulizia with the closest data_inizio
-    Piano_pulizia.aggregate([
-        { $match: { nome_organizzazione: nome_organizzazione } },
-        { $sort: { data_inizio: 1 } },
-        { $limit: 1 }
-    ], (err, data) => {
+    Robot.findById(robot.id, (err, robot_data) => {
         if (err) {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
-        if (data.length === 0) {
+        if (robot_data.length === 0) {
             return res.status(404).json({ Error: "Not found" });
         }
 
-        // update the piano_pulizia with the id_robot
-        Piano_pulizia.findByIdAndUpdate(data[0]._id, { ID_robot: id_robot }, (err, data) => {
+        // find the piano_pulizia with the closest data_inizio
+        Piano_pulizia.aggregate([
+            { $match: { nome_organizzazione: robot_data.nome_organizzazione } },
+            { $sort: { data_inizio: 1 } },
+            { $limit: 1 }
+        ], (err, pp_data) => {
             if (err) {
                 return res.status(500).json({ Error: "Internal server error: " + err });
             }
-            
-            return res.status(200).json(data);
+
+            plan = pp_data[0];
+
+            if (plan.length == 0) {
+                return res.status(404).json({ Error: "Not found" });
+            }
+
+            // check if plan is already assigned to a robot
+            if (plan.ID_robot != "") {
+                return res.status(400).json({ Error: "Bad request: plan already assigned to a robot" });
+            }
+
+            // update the piano_pulizia with the id_robot
+            Piano_pulizia.findByIdAndUpdate(plan._id, { ID_robot: robot_data._id }, {new: true}, (err, data) => {
+                if (err) {
+                    return res.status(500).json({ Error: "Internal server error: " + err });
+                }
+
+                if (data.length === 0) {
+                    return res.status(404).json({ Error: "Not found" });
+                }
+
+                return res.status(200).json(data);
+            });
         });
     });
 };

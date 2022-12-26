@@ -94,7 +94,7 @@ const deleteOrganisation = (req, res) => {
                 }
             });
 
-            res.status(204);
+            res.status(204).json({ message: "Organisation deleted" });
         } else {
             // if organisation not found return 404 error
             res.status(404).json({ message: "Organisation not found" });
@@ -163,6 +163,11 @@ const addRobotToOrganisation = (req, res) => {
     // check if parameters are missing, if so return bad request
     const nome_organizzazione = req.params.name;
     const id_robot = req.body.id_robot;
+
+    if (!id_robot) {
+        res.status(400).json({ message: "Bad Request: Missing parameters" });
+        return;
+    }
 
     // check if organisation exists
     Organisation.findOne({ name: nome_organizzazione }, (err, data) => {

@@ -15,9 +15,7 @@ const zonaSchema = new mongoose.Schema({
             LON: Number,
             ALT: Number,
         }
-    }],
-    rifiuti_da_smistare: [String],
-    rifiuti_non_riconosciuti: [String],
+    }]
 });
 
 // zona model

@@ -4,15 +4,23 @@ const express = require('express'); //import express
 const router = express.Router();
 // 2.
 const rifiutoController = require('../controllers/rifiuto');
+const tokenChecker = require('../middleware/tokenChecker');
 // 3.
 
-router.post('/rifiuto', rifiutoController.riconoscimentoRifiuto);
+router.post('/rifiuto', tokenChecker, rifiutoController.riconoscimentoRifiuto);
 
-router.get('/rifiuto/:id', rifiutoController.getDettagliRifiuto);
+router.get('/rifiuto/info/:id', tokenChecker, rifiutoController.getDettagliRifiuto);
 
-router.delete('/rifiuto/:id', rifiutoController.deleteRifiuto);
+router.get('/rifiuto/tocollect', tokenChecker, rifiutoController.getTrashToCollect);
 
-router.patch('/rifiuto/:id', rifiutoController.classificaRifiuto);
+router.get('/rifiuto/toclassify', tokenChecker, rifiutoController.getTrashToClassify);
+
+router.delete('/rifiuto/:id', tokenChecker, rifiutoController.deleteRifiuto);
+
+router.patch('/rifiuto/:id', tokenChecker, rifiutoController.classificaRifiuto);
+
+
+
 
 
 module.exports = router;

@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const { ObjectId } = require('mongodb');
 
 
-
 // POST create new robot
 // Body: nome_organizzazione
 const createRobot = (req, res) => {
@@ -12,15 +11,15 @@ const createRobot = (req, res) => {
 
     // check that the user has the role of "Admin"
     User.findOne({username: user.username}).then((data) => {
+        if (!data) {
+            return res.status(404).json({ Error: "User not found" });
+        }
         if (data.ruolo != "admin") {
             return res.status(403).json({ Error: "Forbidden" });
         }
     }).catch((err) => {
         return res.status(500).json({ Error: "Internal server error: " + err });
     });
-
-
-    console.log("Creating new robot for organization: " + nome_organizzazione);
 
     const newRobot = new Robot({
         nome_organizzazione: "",
@@ -33,6 +32,8 @@ const createRobot = (req, res) => {
             ALT: 0
         }
     });
+
+    console.log("Creating new robot with id: " + newRobot._id)
 
     var payload = {
         id: newRobot._id,
@@ -49,6 +50,7 @@ const createRobot = (req, res) => {
 };
 // GET robot by id
 const getRobotById = (req, res) => {
+    let user = req.loggedUser;
     const id = req.params.id;
 
     // Check if the format of the id is valid before querying the database
@@ -56,11 +58,28 @@ const getRobotById = (req, res) => {
         return res.status(400).json({ Error: "Invalid id" });
     }
 
-    Robot.findById(id).then((data) => {
-        if (data)
-            return res.status(200).json(data);
-        else
-            return res.status(404).json({ Error: "Robot not found" });
+    console.log("Getting robot with id: " + id)
+    console.log("User: " + user.username)
+    // Get the robot with the specified id and check taht the user belongs to the organization of the robot
+    User.findOne({ username: user.username }).then((user_data) => {
+        if (!user_data) {
+            return res.status(404).json({ Error: "User not found" });
+        }
+    
+        Robot.findById(id).then((robot_data) => {
+            if (!robot_data) {
+                return res.status(404).json({ Error: "Robot not found" });
+            }
+            // Check if the robot organization is inside the list of the user organizations
+            if (!user_data.nomi_organizzazioni.includes(robot_data.nome_organizzazione)) {
+                return res.status(403).json({ Error: "Forbidden" });
+            }
+            else {
+                return res.status(200).json(robot_data);
+            }
+        }).catch((err) => {
+            return res.status(500).json({ Error: "Internal server error: " + err });
+        });
     }).catch((err) => {
         return res.status(500).json({ Error: "Internal server error: " + err });
     });
@@ -78,7 +97,7 @@ const updateRobot = (req, res) => {
     }
 
     // check that all parameters are present
-    if (!req.body.capienza_attuale || !req.body.temperatura || !req.body.batteria || !req.body.posizione) {
+    if (req.body.capienza_attuale == null || req.body.temperatura == null || req.body.batteria == null || !req.body.posizione) {
         return res.status(400).json({ Error: "Bad request, missing parameters" });
     }
 

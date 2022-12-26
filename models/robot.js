@@ -11,7 +11,6 @@ const robotSchema = new mongoose.Schema({
         ALT: Number,
     },
     online: Boolean,
-    id_piano_pulizia: String,
     nome_organizzazione: String,
 });
 
