@@ -162,7 +162,7 @@ const getAllRobots = (req, res) => {
 const addRobotToOrganisation = (req, res) => {
     // check if parameters are missing, if so return bad request
     const nome_organizzazione = req.params.name;
-    const id_robot = req.params.id_robot;
+    const id_robot = req.body.id_robot;
 
     // check if organisation exists
     Organisation.findOne({ name: nome_organizzazione }, (err, data) => {

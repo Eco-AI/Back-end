@@ -19,12 +19,6 @@ const createRobot = (req, res) => {
         return res.status(500).json({ Error: "Internal server error: " + err });
     });
 
-    const nome_organizzazione = req.body.nome_organizzazione;
-
-    if (!nome_organizzazione) {
-        res.status(400).json({ message: "Bad request, missing parameters" });
-        return;
-    }
 
     console.log("Creating new robot for organization: " + nome_organizzazione);
 

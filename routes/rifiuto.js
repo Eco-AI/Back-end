@@ -6,11 +6,13 @@ const router = express.Router();
 const rifiutoController = require('../controllers/rifiuto');
 // 3.
 
-router.get('/rifiuto', rifiutoController.getElencoRifiuti);
-
 router.post('/rifiuto', rifiutoController.riconoscimentoRifiuto);
 
 router.get('/rifiuto/:id', rifiutoController.getDettagliRifiuto);
+
+router.delete('/rifiuto/:id', rifiutoController.deleteRifiuto);
+
+router.patch('/rifiuto/:id', rifiutoController.classificaRifiuto);
 
 
 module.exports = router;

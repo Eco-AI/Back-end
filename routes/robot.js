@@ -11,7 +11,7 @@ router.post('/robot', tokenChecker, robotController.createRobot);
 
 router.get('/robot/:id', tokenChecker, robotController.getRobotById);
 
-router.put('/robot/:id', tokenChecker, robotController.updateRobot);
+router.put('/robot', tokenChecker, robotController.updateRobot);
 
 // 4.
 module.exports = router; // export to use in server.js

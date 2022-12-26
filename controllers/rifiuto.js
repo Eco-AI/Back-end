@@ -1,16 +1,5 @@
 const Rifiuto = require('../models/rifiuto');
 
-//GET elenco rifiuti by zona
-// TODO: search in piani_pulizia for the zona_id
-const getElencoRifiuti = (req, res) => {
-    const zona = req.params.zona;
-    Rifiuto.find({}, (err, data) => {
-        if (err) {
-            return res.json({ Error: err });
-        }
-        return res.json(data);
-    })
-};
 
 // GET rifiuto by id
 const getDettagliRifiuto = (req, res) => {
@@ -23,6 +12,36 @@ const getDettagliRifiuto = (req, res) => {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
         return res.json(data);
+    })
+};
+
+// DELETE rifiuto by id
+const deleteRifiuto = (req, res) => {
+    const id = req.params.id;
+    Rifiuto.findByIdAndDelete(id, (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        if (data.length == 0) {
+            return res.status(404).json({ message: "Rifiuto not found" });
+        }
+        return res.status(204);
+    })
+};
+
+// PATCH classifica rifiuto by id
+const classificaRifiuto = (req, res) => {
+    const id = req.params.id;
+    const classificazione = req.body.classificazione;
+
+    Rifiuto.findByIdAndUpdate(id, { classificazione: classificazione }, (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        if (data.length == 0) {
+            return res.status(404).json({ message: "Rifiuto not found" });
+        }
+        return res.status(204);
     })
 };
 
@@ -42,7 +61,8 @@ const riconoscimentoRifiuto = (req, res) => {
 
 //export controller functions
 module.exports = {
-    getElencoRifiuti,
     getDettagliRifiuto,
+    deleteRifiuto,
+    classificaRifiuto,
     riconoscimentoRifiuto,
 };

@@ -4,8 +4,12 @@ const crypto = require('crypto');
 
 // login
 const login = async (req, res) => {
+	if (!req.body.username || !req.body.password) {
+		res.status(400).json({ success: false, message: 'Please, pass a username, password, email and phone number.' });
+		return;
+	}
 	// find the user
-	let user = await Utente.findOne({ username: req.body.username }).exec()
+	let user = await Utente.findOne({ username: req.body.username }).exec();
 
 	// user not found
 	if (user.length == 0) {

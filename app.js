@@ -7,6 +7,7 @@ const org_route = require('./routes/organisation'); // import the routes
 const piano_route = require('./routes/piano_pulizia'); // import the routes
 const rifiuto_route = require('./routes/rifiuto'); // import the routes
 const robot_route = require('./routes/robot'); // import the routes
+const zona_route = require('./routes/zona'); // import the routes
 
 const mongoose = require('mongoose');
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use('/', org_route); //to use the routes
 app.use('/', piano_route); //to use the routes
 app.use('/', rifiuto_route); //to use the routes
 app.use('/', robot_route); //to use the routes
+app.use('/', zona_route); //to use the routes
 
 /* Default 404 handler */
 app.use((req, res) => {

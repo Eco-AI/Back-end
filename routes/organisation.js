@@ -15,6 +15,6 @@ router.get('/organisation/:name/info', tokenChecker, organisationController.getO
 
 router.get('/organisation/:name/robots', tokenChecker,  organisationController.getAllRobots);
 
-router.patch('/organisation/:name/robots/:id_robot', tokenChecker, organisationController.addRobotToOrganisation);
+router.patch('/organisation/:name/robots', tokenChecker, organisationController.addRobotToOrganisation);
 
 module.exports = router; // export to use in server.js
