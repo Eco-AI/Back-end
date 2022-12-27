@@ -1,15 +1,10 @@
-import tensorflow as tf
-import numpy as np
-import matplotlib.pyplot as plt
 import random
 import math
 import os
+import sys
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-import random
-import math
-import os
 from PIL import Image
 import cv2 as cv
 from sklearn.linear_model import LinearRegression
@@ -60,7 +55,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss=tf.
 #latest = tf.train.latest_checkpoint('./checkpoints/my_checkpoint')
 model.load_weights('./checkpoints/my_checkpoint')
 
-url = "https://www.ricettasprint.it/wp-content/uploads/2020/08/Fogli-di-alluminio.jpg";
+url = sys.argv[1]
 image = tf.keras.utils.get_file("", origin=url)
 
 img = tf.keras.preprocessing.image.load_img(image, target_size=(256, 256))
