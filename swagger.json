@@ -33,16 +33,12 @@
       "description": "API per i rifiuti"
     }],
     "schemes": ["http"],
-    "components": {
-      "securitySchemes": [
-        {
-          "jwt": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "x-access-token"
-          }
-        }
-      ]
+    "securityDefinitions": {
+      "jwt": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-access-token"
+      }
     },
     "paths": {
       "/utente/signup": {
@@ -458,7 +454,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/definitions/organizzazione"
+                    "$ref": "#/definitions/organisation"
                   }
                 }
               }
@@ -472,7 +468,7 @@
           }
         }
       },
-      "organisation/{name}/robots": {
+      "/organisation/{name}/robots": {
         "get": {
           "tags": ["organisation"],
           "summary": "Robot di un'organizzazione",
@@ -530,7 +526,7 @@
               }
             },
             {
-              "name": "id",
+              "name": "id_robot",
               "in": "query",
               "description": "Id del robot",
               "required": true,

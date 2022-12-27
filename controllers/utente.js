@@ -14,7 +14,7 @@ const login = async (req, res) => {
 	});
 
 	// user not found
-	if (user.length == 0) {
+	if (!user) {
 		console.log("User not found");
 		return res.status(404).json({ success: false, message: 'Authentication failed. User not found.' });
 	}
