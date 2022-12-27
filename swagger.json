@@ -33,6 +33,17 @@
       "description": "API per i rifiuti"
     }],
     "schemes": ["http"],
+    "components": {
+      "securitySchemes": [
+        {
+          "jwt": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "x-access-token"
+          }
+        }
+      ]
+    },
     "paths": {
       "/utente/signup": {
           "post": {
@@ -116,6 +127,11 @@
           "tags": ["utente"],
           "summary": "Logout",
           "description": "Effettua il logout",
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "Logged out successfully"
@@ -134,6 +150,11 @@
           "tags": ["utente"],
           "summary": "Restituisce le organizzazioni dell'utente",
           "description": "Restituisce le organizzazioni a cui appartiene l'utente",
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description":"",
@@ -162,6 +183,11 @@
           "tags": ["utente"],
           "summary": "Profilo utente",
           "description": "Restituisce le informazioni del profilo utente",
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "content": {
@@ -192,15 +218,20 @@
           "description": "Crea un nuovo robot",
           "parameters":[
             {
-            "name": "robot",
-            "in": "body",
-            "description": "Utente da registrare",
-            "required": true,
-            "schema": {
-              "$ref": "#/bodies/newrobot_body"
+              "name": "robot",
+              "in": "body",
+              "description": "Utente da registrare",
+              "required": true,
+              "schema": {
+                "$ref": "#/bodies/newrobot_body"
+              } 
             }
-          }
-        ],
+          ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "201": {
               "description": "",
@@ -235,15 +266,20 @@
           "description": "Aggiorna i parametri di un robot",
           "parameters":[
             {
-            "name": "robot",
-            "in": "body",
-            "description": "Utente da registrare",
-            "required": true,
-            "schema": {
-              "$ref": "#/bodies/updaterobot_body"
+              "name": "robot",
+              "in": "body",
+              "description": "Utente da registrare",
+              "required": true,
+              "schema": {
+                "$ref": "#/bodies/updaterobot_body"
+              }
             }
-          }
-        ],
+          ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "",
@@ -283,6 +319,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "",
@@ -316,15 +357,20 @@
           "description": "Crea una nuova organizzazione",
           "parameters":[
             {
-            "name": "organizzazione",
-            "in": "body",
-            "description": "organizzazione da creare",
-            "required": true,
-            "schema": {
-              "$ref": "#/bodies/ciao_body"
+              "name": "organizzazione",
+              "in": "body",
+              "description": "organizzazione da creare",
+              "required": true,
+              "schema": {
+                "$ref": "#/bodies/ciao_body"
+              }
             }
-          }
-        ],
+          ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "201": {
               "description": "Organisation created",
@@ -367,6 +413,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "204": {
               "description": "Organisation deleted"
@@ -394,6 +445,11 @@
               "schema": {
                 "type": "string"
               }
+            }
+          ],
+          "security": [
+            {
+              "jwt": []
             }
           ],
           "responses": {
@@ -430,6 +486,11 @@
               "schema": {
                 "type": "string"
               }
+            }
+          ],
+          "security": [
+            {
+              "jwt": []
             }
           ],
           "responses": {
@@ -479,6 +540,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "Robot added to organisation"
@@ -514,6 +580,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "201": {
               "description": "Piano di pulizia creato",
@@ -537,6 +608,11 @@
           "tags": ["piano pulizia"],
           "summary": "Assegna piano pulizia",
           "description": "Assegna un piano di pulizia ad un robot",
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "Piano di pulizia assegnato"
@@ -572,6 +648,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "",
@@ -603,6 +684,11 @@
           "tags": ["piano pulizia"],
           "summary": "Info piano pulizia (robot)",
           "description": "Restituisce le informazioni del piano di pulizia associato ad un robot, viene effetuata da un robot",
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "",
@@ -641,6 +727,11 @@
                 "type": "integer",
                 "format": "int64"
               }
+            }
+          ],
+          "security": [
+            {
+              "jwt": []
             }
           ],
           "responses": {
@@ -682,6 +773,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "201": {
               "description": "Zone created successfully",
@@ -717,6 +813,11 @@
                 "type": "integer",
                 "format": "int64"
               }
+            }
+          ],
+          "security": [
+            {
+              "jwt": []
             }
           ],
           "responses": {
@@ -759,6 +860,11 @@
               }
             }
           ],
+          "security": [
+            {
+              "jwt": []
+            }
+          ],
           "responses": {
             "200": {
               "description": "Zone containers retrieved successfully",
@@ -798,6 +904,11 @@
                 }
               }
             ],
+            "security": [
+              {
+                "jwt": []
+              }
+            ],
             "responses": {
               "201": {
                 "description": "",
@@ -833,6 +944,11 @@
                   "type": "integer",
                   "format": "int64"
                 }
+              }
+            ],
+            "security": [
+              {
+                "jwt": []
               }
             ],
             "responses": {
@@ -873,6 +989,11 @@
                 }
               }
             ],
+            "security": [
+              {
+                "jwt": []
+              }
+            ],
             "responses": {
               "204": {
                 "description": ""
@@ -903,6 +1024,11 @@
                 }
               }
             ],
+            "security": [
+              {
+                "jwt": []
+              }
+            ],
             "responses": {
               "200": {
                 "description": "Rifiuto info retrieved successfully",
@@ -928,6 +1054,11 @@
             "tags": ["rifiuto"],
             "summary": "Rifiuti da raccogliere",
             "description": "Restituisce i rifiuti da raccogliere",
+            "security": [
+              {
+                "jwt": []
+              }
+            ],
             "responses": {
               "200": {
                 "description": "Rifiuti da raccogliere retrieved successfully",
@@ -956,6 +1087,11 @@
             "tags": ["rifiuto"],
             "summary": "Rifiuti da classificare",
             "description": "Restituisce i rifiuti da classificare (non riconosciuti)",
+            "security": [
+              {
+                "jwt": []
+              }
+            ],
             "responses": {
               "200": {
                 "description": "Rifiuti da classificare retrieved successfully",
