@@ -17,6 +17,7 @@ const riconoscimentoRifiuto = (req, res) => {
 
     let options = {
         scriptPath: './controllers/classificatore_rifiuti',
+        args: [url_foto]
     };
     PythonShell.run('EmptyClassifier.py', options, (err, results) => {
         if (err) {
