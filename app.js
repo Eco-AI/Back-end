@@ -2,6 +2,7 @@ const dotenv = require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const app = express();
+const cors = require('cors');
 const swaggerDocument = require('./swagger.json');
 
 const utente_route = require('./routes/utente'); // import the routes
@@ -15,6 +16,7 @@ const mongoose = require('mongoose');
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
+app.use(cors())
 
 app.use('/', utente_route); //to use the routes
 app.use('/', org_route); //to use the routes
