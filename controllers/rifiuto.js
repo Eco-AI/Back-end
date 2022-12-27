@@ -18,13 +18,16 @@ const riconoscimentoRifiuto = (req, res) => {
     let options = {
         scriptPath: './controllers/classificatore_rifiuti',
     };
-    PythonShell.run('classifier.py', options, (err, results) => {
+    PythonShell.run('EmptyClassifier.py', options, (err, results) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
         else
         {
-            let classification = results[0];
+            let output = results[0];
+            // The output is a text like this "[...] Prediction: <prediction> [...]"
+            // Extract the <prediction> substring
+            let classification = output.substring(output.indexOf("Prediction: ") + 12, output.substring(output.indexOf("Prediction: ") + 12).indexOf("\n"));
             console.log(classification);
             if (classification == "Non riconosciuto") {
                 // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
