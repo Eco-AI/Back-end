@@ -5,9 +5,15 @@ const { ObjectId } = require('mongodb');
 
 
 // POST create new robot
-// Body: nome_organizzazione
+// Body: capienza_attuale
 const createRobot = (req, res) => {
     let user = req.loggedUser;
+    const capienza_attuale = req.body.capienza_attuale;
+
+    // check that all parameters are present
+    if (!capienza_attuale) {
+        return res.status(400).json({ Error: "Bad request, missing parameters" });
+    }
 
     // check that the user has the role of "Admin"
     User.findOne({username: user.username}).then((data) => {
@@ -23,7 +29,7 @@ const createRobot = (req, res) => {
 
     const newRobot = new Robot({
         nome_organizzazione: "",
-        capienza_attuale: 0,
+        capienza_attuale: capienza_attuale,
         temperatura: 0,
         batteria: 100,
         posizione: {

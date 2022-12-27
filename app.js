@@ -1,6 +1,8 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
 const app = express();
+const swaggerDocument = require('./swagger.json');
 
 const utente_route = require('./routes/utente'); // import the routes
 const org_route = require('./routes/organisation'); // import the routes
@@ -10,6 +12,8 @@ const robot_route = require('./routes/robot'); // import the routes
 const zona_route = require('./routes/zona'); // import the routes
 
 const mongoose = require('mongoose');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 
 app.use('/', utente_route); //to use the routes

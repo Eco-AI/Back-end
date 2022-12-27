@@ -1,4 +1,5 @@
 const Piano_pulizia = require('../models/piano_pulizia');
+const Organizzazione = require('../models/organisation');
 const Robot = require('../models/robot');
 // newPiano_pulizia function for post Piano_pulizia route
 //POST Piano_pulizia
@@ -36,7 +37,7 @@ const createPianoPulizia = (req, res) => {
     // save this object to database
     newPiano_pulizia.save((err, data) => {
         if (err) return res.status(500).json({ Error: "Internal server error: " + err });
-        return res.status(200).json(data);
+        return res.status(201).json(data);
     })
 };
 
@@ -49,13 +50,24 @@ const getPianoPuliziaList = (req, res) => {
         return res.status(400).json({ Error: "Bad request: missing parameters" });
     }
 
+    // check if organization exists
+    Organizzazione.findOne({ nome: nome_organizzazione }, (err, data) => {
+        if (err) {
+            return res.status(500).json({ Error: "Internal server error: " + err });
+        }
+
+        if (data.length === 0) {
+            return res.status(404).json({ Error: "Organization not found" });
+        }
+    });
+
     Piano_pulizia.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
         if (err) {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
         if (data.length === 0) {
-            return res.status(404).json({ Error: "Not found" });
+            return res.status(404).json({ Error: "Plan not found" });
         }
 
         // return the list of ids of piano_pulizia
@@ -104,7 +116,7 @@ const getPianoPuliziaInfoForRobot = (req, res) => {
         }
 
         if (data.length === 0) {
-            return res.status(404).json({ Error: "Not found" });
+            return res.status(404).json({ Error: "Plan not found" });
         }
 
         return res.status(200).json(data);
@@ -121,7 +133,7 @@ const assegnaPianoPulizia = (req, res) => {
         }
 
         if (robot_data.length === 0) {
-            return res.status(404).json({ Error: "Not found" });
+            return res.status(404).json({ Error: "Robot not found" });
         }
 
         // find the piano_pulizia with the closest data_inizio
@@ -137,12 +149,12 @@ const assegnaPianoPulizia = (req, res) => {
             plan = pp_data[0];
 
             if (plan.length == 0) {
-                return res.status(404).json({ Error: "Not found" });
+                return res.status(404).json({ Error: "Plan not found" });
             }
 
             // check if plan is already assigned to a robot
             if (plan.ID_robot != "") {
-                return res.status(400).json({ Error: "Bad request: plan already assigned to a robot" });
+                return res.status(409).json({ Error: "Plan already assigned to a robot" });
             }
 
             // update the piano_pulizia with the id_robot
@@ -152,7 +164,7 @@ const assegnaPianoPulizia = (req, res) => {
                 }
 
                 if (data.length === 0) {
-                    return res.status(404).json({ Error: "Not found" });
+                    return res.status(404).json({ Error: "Plan not found" });
                 }
 
                 return res.status(200).json(data);

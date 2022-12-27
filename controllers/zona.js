@@ -12,7 +12,7 @@ const createZone = (req, res) => {
 
     // handle bad request
     if (!coordinates || !contenitori_rifiuti) {
-        res.status(400).json({success: false, message: 'Bad request'});
+        res.status(400).json({success: false, message: 'Bad request, missing parameters'});
         return;
     }
 
@@ -30,7 +30,7 @@ const createZone = (req, res) => {
             console.log(err);
             res.status(500).json({success: false, message: 'Internal server error: ' + err});
         } else {
-            res.status(200).json({success: true, message: 'Zone created successfully', zone: zone});
+            res.status(201).json({success: true, message: 'Zone created successfully', zone: zone});
         }
     });
 };

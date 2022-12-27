@@ -162,7 +162,7 @@ const getAllRobots = (req, res) => {
 const addRobotToOrganisation = (req, res) => {
     // check if parameters are missing, if so return bad request
     const nome_organizzazione = req.params.name;
-    const id_robot = req.body.id_robot;
+    const id_robot = req.query.id_robot;
 
     if (!id_robot) {
         res.status(400).json({ message: "Bad Request: Missing parameters" });

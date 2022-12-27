@@ -1,62 +1,143 @@
 const Rifiuto = require('../models/rifiuto');
 const Robot = require('../models/robot');
 const PianoPulizia = require('../models/piano_pulizia');
-const { spawn } = require('child_process');
+const PythonShell = require('python-shell').PythonShell;
 
 
 // POST riconoscimento rifiuto
 const riconoscimentoRifiuto = (req, res) => {
     let robot = req.loggedUser;
-    // TODO: implement python AI to recognize the waste
-    const pythonProcess = spawn('python', ['classifier.py']);
-    pythonProcess.stdout.on('data', (data) => {
-        classification = data.toString();
 
-        if (classification == "Non riconosciuto") {
-            // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
-            Robot.findById(robot.id, (err, data) => {
+    const url_foto = req.body.URL_foto;
+    const posizione = req.body.posizione;
+
+    if (!url_foto || !posizione) {
+        return res.status(400).json({ message: "Bad Request: Missing parameters" });
+    }
+
+    let options = {
+        scriptPath: './controllers/classificatore_rifiuti',
+    };
+    PythonShell.run('classifier.py', options, (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        else
+        {
+            let classification = results[0];
+            console.log(classification);
+            if (classification == "Non riconosciuto") {
+                // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
+                Robot.findById(robot.id, (err, robot_data) => {
+                    if (err) {
+                        return res.status(500).json({ message: "Internal server error:" + err });
+                    }
+                    if (robot_data.length == 0) {
+                        return res.status(404).json({ message: "Robot not found" });
+                    }
+                    PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
+                        if (err) {
+                            return res.status(500).json({ message: "Internal server error:" + err });
+                        }
+                        if (pp_data.length == 0) {
+                            return res.status(404).json({ message: "Piano pulizia not found" });
+                        }
+
+                        // Create a new Rifiuto object
+                        const newRifiuto = new Rifiuto({
+                            URL_foto: url_foto,
+                            posizione: posizione,
+                            id_zona: pp_data.ID_zona,
+                            classificazione: classification
+                        });
+                        // Save the new Rifiuto object in the database
+                        newRifiuto.save((err, data) => {
+                            if (err) {
+                                return res.status(500).json({ message: "Internal server error:" + err });
+                            }
+                            return res.status(201).json(data);
+                        });
+                    });
+                });
+            }
+            else {
+                // return the classification
+                return res.json(classification);
+            }
+        }
+    });
+};
+// GET rifiuto by id
+const getDettagliRifiuto = (req, res) => {
+    let robot = req.loggedUser;
+
+    Robot.findById(robot.id, (err, robot_data) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        if (robot_data.length == 0) {
+            return res.status(404).json({ message: "Robot not found" });
+        }
+        PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
+            if (err) {
+                return res.status(500).json({ message: "Internal server error:" + err });
+            }
+            if (pp_data.length == 0) {
+                return res.status(404).json({ message: "Piano pulizia not found" });
+            }
+
+            Rifiuto.find({id_zona: pp_data.ID_zona}, (err, data) => {
                 if (err) {
                     return res.status(500).json({ message: "Internal server error:" + err });
                 }
                 if (data.length == 0) {
-                    return res.status(404).json({ message: "Robot not found" });
+                    return res.status(404).json({ message: "Rifiuto not found" });
                 }
-                PianoPulizia.findOne({ID_robot: data._id}, (err, data) => {
-                    if (err) {
-                        return res.status(500).json({ message: "Internal server error:" + err });
-                    }
-                    if (data.length == 0) {
-                        return res.status(404).json({ message: "Piano pulizia not found" });
-                    }
-
-                    // Create a new Rifiuto object
-                    const newRifiuto = new Rifiuto({
-                        URL_foto: req.body.URL_foto,
-                        posizione: req.body.posizione,
-                        id_zona: data.id_zona,
-                        classificazione: classification
-                    });
-                    // Save the new Rifiuto object in the database
-                    newRifiuto.save((err, data) => {
-                        if (err) {
-                            return res.status(500).json({ message: "Internal server error:" + err });
-                        }
-                        return res.status(201).json(data);
-                    });
-                });
+                return res.status(200).json(data);
             });
-        }
-        else {
-            // return the classification
-            return res.json(classification);
-        }
+        });
     });
 };
 
-// GET rifiuto by id
-const getDettagliRifiuto = (req, res) => {
-    const id = req.params.id;
-    Rifiuto.findById(id, (err, data) => {
+// GET trash to collect
+// Query parameters: id_zona
+const getTrashToCollect = (req, res) => {
+    let robot = req.loggedUser;
+
+    Robot.findById(robot.id, (err, robot_data) => {
+        if (err) {
+            return res.status(500).json({ message: "Internal server error:" + err });
+        }
+        if (robot_data.length == 0) {
+            return res.status(404).json({ message: "Robot not found" });
+        }
+        PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
+            if (err) {
+                return res.status(500).json({ message: "Internal server error:" + err });
+            }
+            if (pp_data.length == 0) {
+                return res.status(404).json({ message: "Piano pulizia not found" });
+            }
+
+            Rifiuto.find({id_zona: pp_data.ID_zona, classificazione: {$ne: "Non riconosciuto"}}, (err, data) => {
+                if (err) {
+                    return res.status(500).json({ message: "Internal server error:" + err });
+                }
+                if (data.length == 0) {
+                    return res.status(404).json({ message: "Rifiuto not found" });
+                }
+                return res.json(data);
+            });
+        });
+    });
+};
+
+// GET trash to classify
+// Query parameters: id_zona
+const getTrashToClassify = (req, res) => {
+    let id_zona = req.query.id_zona;
+
+    Rifiuto.find({id_zona: id_zona, classificazione: "Non riconosciuto"}, (err, data) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
@@ -64,40 +145,6 @@ const getDettagliRifiuto = (req, res) => {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
         return res.json(data);
-    })
-};
-
-// GET trash to collect
-// Query parameters: id_zona
-const getTrashToCollect = (req, res) => {
-    const id_zona = req.query.id_zona;
-
-    // Find all the trash in the zone with id = id_zona and classificazione != "Non riconosciuto"
-    Rifiuto.find({ id_zona: id_zona, classificazione: { $ne: "Non riconosciuto" } }, (err, data) => {
-        if (err) {
-            return res.status(500).json({ message: "Internal server error:" + err });
-        }
-        if (data.length == 0) {
-            return res.status(404).json({ message: "Rifiuto not found" });
-        }
-        return res.status(200).json(data);
-    });
-};
-
-// GET trash to classify
-// Query parameters: id_zona
-const getTrashToClassify = (req, res) => {
-    const id_zona = req.query.id_zona;
-
-    // Find all the trash in the zone with id = id_zona and classificazione = "Non riconosciuto"
-    Rifiuto.find({ id_zona: id_zona, classificazione: "Non riconosciuto" }, (err, data) => {
-        if (err) {
-            return res.status(500).json({ message: "Internal server error:" + err });
-        }
-        if (data.length == 0) {
-            return res.status(404).json({ message: "Rifiuto not found" });
-        }
-        return res.status(200).json(data);
     });
 };
 
@@ -111,7 +158,7 @@ const deleteRifiuto = (req, res) => {
         if (data.length == 0) {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
-        return res.status(204);
+        return res.status(204).json(data);
     })
 };
 
@@ -120,17 +167,16 @@ const classificaRifiuto = (req, res) => {
     const id = req.params.id;
     const classificazione = req.body.classificazione;
 
-    Rifiuto.findByIdAndUpdate(id, { classificazione: classificazione }, (err, data) => {
+    Rifiuto.findByIdAndUpdate(id, { classificazione: classificazione }, {new: true}, (err, data) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
-        if (data.length == 0) {
+        if (!data) {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
-        return res.status(204);
+        return res.status(204).json(data);
     })
 };
-
 
 
 //export controller functions

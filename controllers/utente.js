@@ -5,11 +5,13 @@ const crypto = require('crypto');
 // login
 const login = async (req, res) => {
 	if (!req.body.username || !req.body.password) {
-		res.status(400).json({ success: false, message: 'Please, pass a username, password, email and phone number.' });
+		res.status(400).json({ success: false, message: 'Please, pass a username, password.' });
 		return;
 	}
 	// find the user
-	let user = await Utente.findOne({ username: req.body.username }).exec();
+	let user = await Utente.findOne({ username: req.body.username }).exec().catch((err) => {
+		return res.status(500).json({ Error: "Internal server error: " + err });
+	});
 
 	// user not found
 	if (user.length == 0) {
@@ -40,7 +42,6 @@ const login = async (req, res) => {
 		message: 'Enjoy your token!',
 		token: token
 	});
-
 };
 
 // signup
