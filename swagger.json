@@ -1205,7 +1205,7 @@
             "type": "integer",
             "format": "int64"
           },
-          "ID_zona": {
+          "id_zona": {
             "type": "integer",
             "format": "int64"
           },
@@ -1390,7 +1390,7 @@
       "piano_pulizia_body": {
         "type": "object",
         "properties": {
-          "ID_zona": {
+          "id_zona": {
             "type": "integer",
             "format": "int64"
           },

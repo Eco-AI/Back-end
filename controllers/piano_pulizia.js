@@ -7,7 +7,7 @@ const createPianoPulizia = (req, res) => {
     let user = req.loggedUser;
 
     const { id_zona, data_inizio, data_fine, nome_organizzazione } = req.body;
-    if (!id_zona || !data_inizio || !data_fine || !nome_organizzazione) {
+    if (id_zona == null || data_inizio == null || data_fine == null || nome_organizzazione == null) {
         return res.status(400).json({ Error: "Bad request: missing parameters" });
     }
 
