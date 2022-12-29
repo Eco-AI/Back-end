@@ -51,31 +51,31 @@ const getPianoPuliziaList = (req, res) => {
     }
 
     // check if organization exists
-    Organizzazione.findOne({ nome: nome_organizzazione }, (err, data) => {
+    Organizzazione.find({ name: nome_organizzazione }, (err, data) => {
         if (err) {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
-        if (data.length === 0) {
+        if (data.length == 0) {
             return res.status(404).json({ Error: "Organization not found" });
         }
-    });
 
-    Piano_pulizia.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
-        if (err) {
-            return res.status(500).json({ Error: "Internal server error: " + err });
-        }
-
-        if (data.length === 0) {
-            return res.status(404).json({ Error: "Plan not found" });
-        }
-
-        // return the list of ids of piano_pulizia
-        ids = data.map((piano_pulizia) => {
-            return piano_pulizia._id;
+        Piano_pulizia.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
+            if (err) {
+                return res.status(500).json({ Error: "Internal server error: " + err });
+            }
+    
+            if (data.length === 0) {
+                return res.status(404).json({ Error: "Plan not found" });
+            }
+    
+            // return the list of ids of piano_pulizia
+            ids = data.map((piano_pulizia) => {
+                return piano_pulizia._id;
+            });
+    
+            return res.status(200).json(ids);
         });
-
-        return res.status(200).json(ids);
     });
 };
 
