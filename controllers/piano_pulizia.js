@@ -25,6 +25,11 @@ const createPianoPulizia = (req, res) => {
         return res.status(400).json({ Error: "Bad request: start date must be before end date" });
     }
 
+    // check if data_inizio is in the future
+    if (data_inizio_date.getTime() < Date.now()) {
+        return res.status(400).json({ Error: "Bad request: start date must be in the future" });
+    }
+
     // create a new Piano_pulizia object using the Piano_pulizia model and req.body
     const newPiano_pulizia = new Piano_pulizia({
         ID_zona: id_zona,

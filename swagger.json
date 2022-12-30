@@ -1083,6 +1083,16 @@
             "tags": ["rifiuto"],
             "summary": "Rifiuti da classificare",
             "description": "Restituisce i rifiuti da classificare (non riconosciuti)",
+            "parameters": {
+              "in": "query",
+              "name": "id_zona",
+              "description": "ID della zona di cui si vogliono i rifiuti da classificare",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
             "security": [
               {
                 "jwt": []

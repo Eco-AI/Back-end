@@ -79,7 +79,7 @@ const getDettagliRifiuto = (req, res) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
-        if (robot_data.length == 0) {
+        if (!robot_data) {
             return res.status(404).json({ message: "Robot not found" });
         }
         PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
@@ -148,6 +148,11 @@ const getTrashToClassify = (req, res) => {
         if (data.length == 0) {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
+        // Make sure the data is returned as an array
+        if (!Array.isArray(data)) {
+            data = [data];
+        }
+        console.log(data);
         return res.json(data);
     });
 };
