@@ -1,9 +1,9 @@
+const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const app = express();
 const cors = require('cors');
-const mongoose = require('mongoose');
 const swaggerDocument = require('./swagger.json');
 
 const utente_route = require('./routes/utente'); // import the routes
