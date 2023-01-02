@@ -1,8 +1,8 @@
 const Rifiuto = require('../models/rifiuto');
 const Robot = require('../models/robot');
 const PianoPulizia = require('../models/piano_pulizia');
-const PythonShell = require('python-shell').PythonShell;
-
+const https = require('https');
+const classify_API_URL = "http://chriven321.pythonanywhere.com/"
 
 // POST riconoscimento rifiuto
 const riconoscimentoRifiuto = (req, res) => {
@@ -15,61 +15,67 @@ const riconoscimentoRifiuto = (req, res) => {
         return res.status(400).json({ message: "Bad Request: Missing parameters" });
     }
 
-    let options = {
-        scriptPath: './controllers/classificatore_rifiuti',
-        args: [url_foto]
-    };
-    PythonShell.run('classifier.py', options, (err, results) => {
-        if (err) {
+    fetch(classify_API_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            url: url_foto
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            return response.json();
+        }
+        else {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
-        else
-        {
-            let output = results[0];
-            // The output is a text like this "[...] Prediction: <prediction> [...]"
-            // Extract the <prediction> substring
-            //let classification = output.substring(output.indexOf("Prediction: ") + 12, output.substring(output.indexOf("Prediction: ") + 12).indexOf("\n"));
-            let classification = output
-            console.log(classification);
-            if (classification == "Non riconosciuto") {
-                // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
-                Robot.findById(robot.id, (err, robot_data) => {
+    }).then(data => {
+        let classification = data.prediction;
+        // The output is a text like this "[...] Prediction: <prediction> [...]"
+        // Extract the <prediction> substring
+        //let classification = output.substring(output.indexOf("Prediction: ") + 12, output.substring(output.indexOf("Prediction: ") + 12).indexOf("\n"));
+        console.log(classification);
+        if (classification == "Non riconosciuto") {
+            // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
+            Robot.findById(robot.id, (err, robot_data) => {
+                if (err) {
+                    return res.status(500).json({ message: "Internal server error:" + err });
+                }
+                if (!robot_data) {
+                    return res.status(404).json({ message: "Robot not found" });
+                }
+                PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
                     if (err) {
                         return res.status(500).json({ message: "Internal server error:" + err });
                     }
-                    if (!robot_data) {
-                        return res.status(404).json({ message: "Robot not found" });
+                    if (!pp_data) {
+                        return res.status(404).json({ message: "Piano pulizia not found" });
                     }
-                    PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
+
+                    // Create a new Rifiuto object
+                    const newRifiuto = new Rifiuto({
+                        URL_foto: url_foto,
+                        posizione: posizione,
+                        id_zona: pp_data.ID_zona,
+                        classificazione: classification
+                    });
+                    // Save the new Rifiuto object in the database
+                    newRifiuto.save((err, data) => {
                         if (err) {
                             return res.status(500).json({ message: "Internal server error:" + err });
                         }
-                        if (!pp_data) {
-                            return res.status(404).json({ message: "Piano pulizia not found" });
-                        }
-
-                        // Create a new Rifiuto object
-                        const newRifiuto = new Rifiuto({
-                            URL_foto: url_foto,
-                            posizione: posizione,
-                            id_zona: pp_data.ID_zona,
-                            classificazione: classification
-                        });
-                        // Save the new Rifiuto object in the database
-                        newRifiuto.save((err, data) => {
-                            if (err) {
-                                return res.status(500).json({ message: "Internal server error:" + err });
-                            }
-                            return res.status(201).json(data);
-                        });
+                        return res.status(201).json(data);
                     });
                 });
-            }
-            else {
-                // return the classification
-                return res.status(200).json(classification);
-            }
+            });
         }
+        else {
+            // return the classification
+            return res.status(200).json(classification);
+        }
+    }).catch(err => {
+        return res.status(500).json({ message: "Internal server error:" + err });
     });
 };
 // GET rifiuto by id
