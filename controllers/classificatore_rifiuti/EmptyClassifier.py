@@ -24,6 +24,7 @@ print(classes)
 
 AUTOTUNE = tf.data.AUTOTUNE
 
+
 train_dataset = train_dataset.prefetch(buffer_size=AUTOTUNE)
 test_dataset = test_dataset.prefetch(buffer_size=AUTOTUNE)
 
