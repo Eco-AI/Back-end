@@ -4,7 +4,7 @@
   "description": "EcoAI Project",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm install",
+    "build": "start config.bat",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
