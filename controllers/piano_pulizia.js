@@ -98,7 +98,7 @@ const getPianoPuliziaInfoForOrg = (req, res) => {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
-        if (data.length === 0) {
+        if (!data) {
             return res.status(404).json({ Error: "Not found" });
         }
 
@@ -120,7 +120,10 @@ const getPianoPuliziaInfoForRobot = (req, res) => {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
-        if (data.length === 0) {
+        if (!data) {
+            return res.status(404).json({ Error: "Plan not found" });
+        }
+        else if (data.length === 0) {
             return res.status(404).json({ Error: "Plan not found" });
         }
 
@@ -137,7 +140,7 @@ const assegnaPianoPulizia = (req, res) => {
             return res.status(500).json({ Error: "Internal server error: " + err });
         }
 
-        if (robot_data.length === 0) {
+        if (!robot_data) {
             return res.status(404).json({ Error: "Robot not found" });
         }
 

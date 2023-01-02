@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "pnpm install",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "start": "node index.js"
   },
   "keywords": [
@@ -32,6 +32,7 @@
     "mongoose": "^6.2.8",
     "node-fetch": "^3.3.0",
     "python-shell": "^3.0.1",
+    "supertest": "^6.3.3",
     "swagger-ui-express": "^4.6.0"
   }
 }

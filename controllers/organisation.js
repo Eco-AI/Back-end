@@ -115,47 +115,59 @@ const getAllRobots = (req, res) => {
     //                   { "batteria": { ">": 50 }, "temperatura": { ">": 30 }, "capienza_attuale": { "=": 0 } }
     //                   { "batteria": { ">": 50 }, "temperatura": { "=!": 30 }, "capienza_attuale": { "<": 20 } }
 
-    Robot.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
+    // check that the organisation exists
+    Organisation.findOne({ name: nome_organizzazione }, (err, data) => {
         if (err) {
             res.status(500).json({ message: "Internal server error: " + err });
             return;
         }
-        if (data.length == 0) {
-            res.status(404).json({ message: "No robots found" });
+        if (!data) {
+            res.status(404).json({ message: "Organisation not found" });
             return;
         }
-        // check if filter is empty
-        if (!filtro) {
-            // return only robots' id
-            data = data.map(robot => robot["_id"]);
-            res.status(200).json(data);
-            return;
-        }
-        // filter is not empty, filter robots
-        let filteredRobots = [];
-        data.forEach(robot => {
-            let toAdd = true;
-            Object.keys(filtro).forEach(key => {
+
+        Robot.find({ nome_organizzazione: nome_organizzazione }, (err, data) => {
+            if (err) {
+                res.status(500).json({ message: "Internal server error: " + err });
+                return;
+            }
+            if (data.length == 0) {
+                res.status(200).json([]);
+                return;
+            }
+            // check if filter is empty
+            if (!filtro) {
+                // return only robots' id
+                data = data.map(robot => robot["_id"]);
+                res.status(200).json(data);
+                return;
+            }
+            // filter is not empty, filter robots
+            let filteredRobots = [];
+            data.forEach(robot => {
+                let toAdd = true;
+                Object.keys(filtro).forEach(key => {
+                    if (toAdd) {
+                        if (filtro[key]["="] != undefined && (robot[key] != filtro[key]["="])) {
+                            toAdd = false;
+                        }
+                        if (filtro[key]["!="] != undefined && (robot[key] == filtro[key]["!="])) {
+                            toAdd = false;
+                        }
+                        if (filtro[key][">"] != undefined && (robot[key] <= filtro[key][">"])) {
+                            toAdd = false;
+                        }
+                        if (filtro[key]["<"] != undefined && (robot[key] >= filtro[key]["<"])) {
+                            toAdd = false;
+                        }
+                    }
+                });
                 if (toAdd) {
-                    if (filtro[key]["="] != undefined && (robot[key] != filtro[key]["="])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key]["!="] != undefined && (robot[key] == filtro[key]["!="])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key][">"] != undefined && (robot[key] <= filtro[key][">"])) {
-                        toAdd = false;
-                    }
-                    if (filtro[key]["<"] != undefined && (robot[key] >= filtro[key]["<"])) {
-                        toAdd = false;
-                    }
+                    filteredRobots.push(robot["_id"]);
                 }
             });
-            if (toAdd) {
-                filteredRobots.push(robot["_id"]);
-            }
+            return res.status(200).json(filteredRobots);
         });
-        return res.status(200).json(filteredRobots);
     });
 };
 

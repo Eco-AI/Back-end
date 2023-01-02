@@ -14,8 +14,6 @@ const robot_route = require('./routes/robot'); // import the routes
 const zona_route = require('./routes/zona'); // import the routes
 
 
-
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(cors())
@@ -27,8 +25,9 @@ app.use('/', rifiuto_route); //to use the routes
 app.use('/', robot_route); //to use the routes
 app.use('/', zona_route); //to use the routes
 
+
 /* Default 404 handler */
-app.use((req, res) => {
+app.use((req, res,) => {
     res.status(404);
     res.json({ error: 'Error 404: Not Found' });
 });
@@ -43,9 +42,13 @@ mongoose.connect(
     }
 );
 
+if (process.env.TESTING == 'true') {
+    console.log("TESTING MODE");
+} else {
+    const listener = app.listen(process.env.PORT || 3000, () => {
+        console.log('Your app is listening on port ' + listener.address().port)
+    })
+}
 
-const listener = app.listen(process.env.PORT || 3000, () => {
-    console.log('Your app is listening on port ' + listener.address().port)
-})
-
+module.exports = app;
 

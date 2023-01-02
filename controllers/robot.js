@@ -23,33 +23,33 @@ const createRobot = (req, res) => {
         if (data.ruolo != "admin") {
             return res.status(403).json({ Error: "Forbidden" });
         }
-    }).catch((err) => {
-        return res.status(500).json({ Error: "Internal server error: " + err });
-    });
 
-    const newRobot = new Robot({
-        nome_organizzazione: "",
-        capienza_attuale: capienza_attuale,
-        temperatura: 0,
-        batteria: 100,
-        posizione: {
-            LAT: 0,
-            LON: 0,
-            ALT: 0
-        }
-    });
-
-    console.log("Creating new robot with id: " + newRobot._id)
-
-    var payload = {
-        id: newRobot._id,
-        nome_organizzazione: newRobot.nome_organizzazione
-    };
-
-    var token = jwt.sign(payload, process.env.SUPER_SECRET);
-
-    newRobot.save().then((data) => {
-        return res.status(201).json({ id: data._id, token: token });
+        const newRobot = new Robot({
+            nome_organizzazione: "",
+            capienza_attuale: capienza_attuale,
+            temperatura: 0,
+            batteria: 100,
+            posizione: {
+                LAT: 0,
+                LON: 0,
+                ALT: 0
+            }
+        });
+    
+        console.log("Creating new robot with id: " + newRobot._id)
+    
+        var payload = {
+            id: newRobot._id,
+            nome_organizzazione: newRobot.nome_organizzazione
+        };
+    
+        var token = jwt.sign(payload, process.env.SUPER_SECRET);
+    
+        newRobot.save().then((data) => {
+            return res.status(201).json({ id: data._id, token: token });
+        }).catch((err) => {
+            return res.status(500).json({ Error: "Internal server error: " + err });
+        });
     }).catch((err) => {
         return res.status(500).json({ Error: "Internal server error: " + err });
     });
@@ -116,7 +116,7 @@ const updateRobot = (req, res) => {
         "posizione": req.body.posizione,
     }, { new: true }
     ).then((data) => {
-        if (data.length == 0) {
+        if (!data) {
             return res.status(404).json({ Error: "Robot not found" });
         }
         return res.status(200).json(data);
