@@ -1,28 +1,28 @@
 const Rifiuto = require('../models/rifiuto');
 const Robot = require('../models/robot');
 const PianoPulizia = require('../models/piano_pulizia');
-const https = require('https');
 const classify_API_URL = "http://chriven321.pythonanywhere.com/"
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 // POST riconoscimento rifiuto
 const riconoscimentoRifiuto = (req, res) => {
     let robot = req.loggedUser;
 
+    console.log("Body")
+
     const url_foto = req.body.URL_foto;
     const posizione = req.body.posizione;
 
-    if (!url_foto || !posizione) {
+    if (url_foto == null || posizione == null) {
         return res.status(400).json({ message: "Bad Request: Missing parameters" });
     }
 
-    fetch(classify_API_URL, {
+    fetch(classify_API_URL + '?' + new URLSearchParams({url: url_foto}), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            url: url_foto
-        })
+        }
     }).then(response => {
         if (response.status == 200) {
             return response.json();
