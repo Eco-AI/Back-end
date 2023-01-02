@@ -5,8 +5,7 @@ const crypto = require('crypto');
 // login
 const login = async (req, res) => {
 	if (!req.body.username || !req.body.password) {
-		res.status(400).json({ success: false, message: 'Please, pass a username, password.' });
-		return;
+		return res.status(400).json({ success: false, message: 'Please, pass a username, password.' });
 	}
 	// find the user
 	let user = await Utente.findOne({ username: req.body.username }).exec().catch((err) => {
@@ -37,7 +36,7 @@ const login = async (req, res) => {
 	}
 	var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
-	res.status(200).json({
+	return res.status(200).json({
 		success: true,
 		message: 'Enjoy your token!',
 		token: token
@@ -107,7 +106,7 @@ const getProfile = async (req, res) => {
 		return;
 	}
 
-	res.status(200).json({ success: true, profile: profile });
+	return res.status(200).json({ success: true, profile: profile });
 };
 
 const getOrganisations = async (req, res) => {
@@ -131,7 +130,7 @@ const getOrganisations = async (req, res) => {
 		return;
 	}
 
-	res.status(200).json({ success: true, nomi_organizzazioni: profile.nomi_organizzazioni });
+	return res.status(200).json({ success: true, nomi_organizzazioni: profile.nomi_organizzazioni });
 };
 
 module.exports = {

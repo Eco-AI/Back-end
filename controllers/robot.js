@@ -98,9 +98,10 @@ const updateRobot = (req, res) => {
     const id = robot.id;
 
     // Check if the format of the id is valid before querying the database
+    /*
     if (!ObjectId.isValid(id)) {
         return res.status(400).json({ Error: "Invalid id" });
-    }
+    }*/
 
     // check that all parameters are present
     if (req.body.capienza_attuale == null || req.body.temperatura == null || req.body.batteria == null || !req.body.posizione) {

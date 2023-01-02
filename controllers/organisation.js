@@ -68,10 +68,10 @@ const getOrganisation = (req, res) => {
             return;
         }
         if (data) {
-            res.status(200).json({ message: "Organisation found", data: data });
+            return res.status(200).json({ message: "Organisation found", data: data });
         } else {
             // if organisation not found return 404 error
-            res.status(404).json({ message: "Organisation not found" });
+            return res.status(404).json({ message: "Organisation not found" });
         }
     })
 };
@@ -94,10 +94,10 @@ const deleteOrganisation = (req, res) => {
                 }
             });
 
-            res.status(204).json({ message: "Organisation deleted" });
+            return res.status(204).json({ message: "Organisation deleted" });
         } else {
             // if organisation not found return 404 error
-            res.status(404).json({ message: "Organisation not found" });
+            return res.status(404).json({ message: "Organisation not found" });
         }
     })
 };
@@ -155,7 +155,7 @@ const getAllRobots = (req, res) => {
                 filteredRobots.push(robot["_id"]);
             }
         });
-        res.status(200).json(filteredRobots);
+        return res.status(200).json(filteredRobots);
     });
 };
 
@@ -200,7 +200,7 @@ const addRobotToOrganisation = (req, res) => {
                     res.status(500).json({ message: "Internal server error: " + err });
                     return;
                 }
-                res.status(200).json({ message: "Robot added to organisation" });
+                return res.status(200).json({ message: "Robot added to organisation" });
             });
         });
     });
