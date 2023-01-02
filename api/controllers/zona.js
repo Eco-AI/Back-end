@@ -49,7 +49,7 @@ const getZonePosition = (req, res) => {
     console.log("Getting zone position...");
 
     // Find zone
-    Zona.findById(id, (err, zone) => {
+    Zona.findOne({ ID_zona: id }, (err, zone) => {
         if (err) {
             res.status(500).json({success: false, message: 'Internal server error: ' + err});
             return;
@@ -78,7 +78,7 @@ const getZoneContainers = (req, res) => {
     console.log("Getting zone contenitori_rifiuti...");
 
     // Find zone
-    Zona.findById(id, (err, zone) => {
+    Zona.findOne({ ID_zona: id }, (err, zone) => {
         if (err) {
             res.status(500).json({success: false, message: 'Internal server error: ' + err});
             return;

@@ -141,6 +141,7 @@ const assegnaPianoPulizia = (req, res) => {
             return res.status(404).json({ Error: "Robot not found" });
         }
 
+        console.log(robot_data)
         // find the piano_pulizia with the closest data_inizio
         Piano_pulizia.aggregate([
             { $match: { nome_organizzazione: robot_data.nome_organizzazione } },
@@ -151,9 +152,11 @@ const assegnaPianoPulizia = (req, res) => {
                 return res.status(500).json({ Error: "Internal server error: " + err });
             }
 
+            console.log(pp_data)
+
             plan = pp_data[0];
 
-            if (plan.length == 0) {
+            if (!plan) {
                 return res.status(404).json({ Error: "Plan not found" });
             }
 
