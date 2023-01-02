@@ -60,10 +60,11 @@ const getRobotById = (req, res) => {
     const id = req.params.id;
 
     // Check if the format of the id is valid before querying the database
+    /*
     if (!ObjectId.isValid(id)) {
         return res.status(400).json({ Error: "Invalid id" });
     }
-
+    */
     console.log("Getting robot with id: " + id)
     console.log("User: " + user.username)
     // Get the robot with the specified id and check taht the user belongs to the organization of the robot
