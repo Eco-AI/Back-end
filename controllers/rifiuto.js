@@ -142,6 +142,10 @@ const getTrashToCollect = (req, res) => {
 const getTrashToClassify = (req, res) => {
     let id_zona = req.query.id_zona;
 
+    if (!id_zona) {
+        return res.status(400).json({ message: "Missing id_zona parameter" });
+    }
+
     Rifiuto.find({id_zona: id_zona, classificazione: "Non riconosciuto"}, (err, data) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
@@ -161,11 +165,16 @@ const getTrashToClassify = (req, res) => {
 // DELETE rifiuto by id
 const deleteRifiuto = (req, res) => {
     const id = req.params.id;
+
+    if (!id) {
+        return res.status(400).json({ message: "Missing id parameter" });
+    }
+
     Rifiuto.findByIdAndDelete(id, (err, data) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
         }
-        if (data.length == 0) {
+        if (!data) {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
         return res.status(204).json(data);
@@ -177,6 +186,10 @@ const classificaRifiuto = (req, res) => {
     const id = req.params.id;
     const classificazione = req.body.classificazione;
 
+    if (!id || !classificazione) {
+        return res.status(400).json({ message: "Missing id or classificazione parameter" });
+    }
+
     Rifiuto.findByIdAndUpdate(id, { classificazione: classificazione }, {new: true}, (err, data) => {
         if (err) {
             return res.status(500).json({ message: "Internal server error:" + err });
@@ -184,7 +197,7 @@ const classificaRifiuto = (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Rifiuto not found" });
         }
-        return res.status(204).json(data);
+        return res.status(200).json(data);
     })
 };
 
