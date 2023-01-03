@@ -15,6 +15,7 @@
   "author": "T-48",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/serve-static": "^3.0.0",
     "axios": "^1.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

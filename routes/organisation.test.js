@@ -51,7 +51,7 @@ describe('POST /organisation', () => {
       .post('/organisation')
       .set('x-access-token', userToken)
       .send({
-        name: 'epic gaymers',
+        name: 'epic games',
         employee_num: 10
       });
 
@@ -65,7 +65,7 @@ describe('POST /organisation', () => {
       .post('/organisation')
       .set('x-access-token', userToken)
       .send({
-        name: 'epic gaymers ' + random,
+        name: 'epic games ' + random,
         employee_num: 10
       });
 
@@ -77,7 +77,7 @@ describe('POST /organisation', () => {
 describe('DELETE /organisation/:name', () => {
   test('DELETE /organisation/:name with no token should return 400 (no token provided)', async () => {
     const response = await request(app)
-      .delete('/organisation/epic gaymers');
+      .delete('/organisation/epic games');
 
     expect(response.statusCode).toBe(400);
   });
@@ -101,7 +101,7 @@ describe('DELETE /organisation/:name', () => {
   
   test('DELETE /organisation/:name with a valid name should return 204 (No Content)', async () => {
     const response = await request(app)
-      .delete('/organisation/epic gaymers')
+      .delete('/organisation/epic games')
       .set('x-access-token', userToken);
 
     expect(response.statusCode).toBe(204);
@@ -254,7 +254,7 @@ describe('PATCH /organisation/:name/robots', () => {
       .patch('/organisation/burger king/robots')
       .set('x-access-token', userToken)
       .query({
-        id_robot: '63ad9bddb59ae608b3fa842d'
+        id_robot: '63ad9bd0b59ae608b3fa842a'
       }).expect(200);
   });
 });

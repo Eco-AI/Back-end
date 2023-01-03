@@ -89,10 +89,6 @@ const getPianoPuliziaList = (req, res) => {
 const getPianoPuliziaInfoForOrg = (req, res) => {
     const id = req.params.id;
 
-    if (!id) {
-        return res.status(400).json({ Error: "Bad request: missing parameters" });
-    }
-
     Piano_pulizia.findById(id, (err , data) => {
         if (err) {
             return res.status(500).json({ Error: "Internal server error: " + err });
@@ -110,10 +106,6 @@ const getPianoPuliziaInfoForOrg = (req, res) => {
 const getPianoPuliziaInfoForRobot = (req, res) => {
     let robot = req.loggedUser;
     let robot_id = robot.id;
-
-    if (!robot) {
-        return res.status(400).json({ Error: "Bad request: missing parameters" });
-    }
 
     Piano_pulizia.findOne({ ID_robot: robot_id }, (err, data) => {
         if (err) {
@@ -183,9 +175,6 @@ const assegnaPianoPulizia = (req, res) => {
         });
     });
 };
-
-
-
 
 //export controller functions
 module.exports = {

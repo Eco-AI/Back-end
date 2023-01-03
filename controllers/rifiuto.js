@@ -17,6 +17,46 @@ const riconoscimentoRifiuto = (req, res) => {
     if (url_foto == null || posizione == null) {
         return res.status(400).json({ message: "Bad Request: Missing parameters" });
     }
+    /*
+    let classification = "Non riconosciuto";
+        // The output is a text like this "[...] Prediction: <prediction> [...]"
+        // Extract the <prediction> substring
+        //let classification = output.substring(output.indexOf("Prediction: ") + 12, output.substring(output.indexOf("Prediction: ") + 12).indexOf("\n"));
+        console.log(classification);
+        if (classification == "Non riconosciuto") {
+            // Get the zone where the trash is located (use the robot id to get the piano_pulizia, then the zone)
+            Robot.findById(robot.id, (err, robot_data) => {
+                if (err) {
+                    return res.status(500).json({ message: "Internal server error:" + err });
+                }
+                if (!robot_data) {
+                    return res.status(404).json({ message: "Robot not found" });
+                }
+                PianoPulizia.findOne({ID_robot: robot_data._id}, (err, pp_data) => {
+                    if (err) {
+                        return res.status(500).json({ message: "Internal server error:" + err });
+                    }
+                    if (!pp_data) {
+                        return res.status(404).json({ message: "Piano pulizia not found" });
+                    }
+
+                    // Create a new Rifiuto object
+                    const newRifiuto = new Rifiuto({
+                        URL_foto: url_foto,
+                        posizione: posizione,
+                        id_zona: pp_data.ID_zona,
+                        classificazione: classification
+                    });
+                    // Save the new Rifiuto object in the database
+                    newRifiuto.save((err, data) => {
+                        if (err) {
+                            return res.status(500).json({ message: "Internal server error:" + err });
+                        }
+                        return res.status(201).json(data);
+                    });
+                });
+            });
+        }*/
 
     fetch(classify_API_URL + '?' + new URLSearchParams({url: url_foto}), {
         method: 'GET',
@@ -74,6 +114,7 @@ const riconoscimentoRifiuto = (req, res) => {
             // return the classification
             return res.status(200).json(classification);
         }
+        
     }).catch(err => {
         return res.status(500).json({ message: "Internal server error:" + err });
     });

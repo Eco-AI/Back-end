@@ -243,7 +243,7 @@ describe('DELETE /rifiuto/:id', () => {
 
   test('DELETE /rifiuto/:id with a valid token and a valid id should return 204 (OK)', async () => {
     const response = await request(app)
-      .delete('/rifiuto/63adfd7f72c887357ffce28e')
+      .delete('/rifiuto/63b310569a6916482a327449')
       .set('x-access-token', userToken);
 
     expect(response.statusCode).toBe(204);

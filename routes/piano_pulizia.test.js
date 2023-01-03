@@ -297,7 +297,7 @@ describe('PATCH /piano_pulizia', () => {
 
   // create a valid token
   payload3 = {
-    id: '63b2d4cac7795745a5d43b94',
+    id: '63b2bd7b42836cc241171a3d',
     nome_organizzazione: "burger king"
   };
   token3 = jwt.sign(payload3, process.env.SUPER_SECRET);
